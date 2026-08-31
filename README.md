@@ -1,134 +1,499 @@
-# Aurora — outfits in your colour
+# Aurora — Outfits in Your Colour
 
-> An **AI-powered personalised outfit recommendation** feed. A dark editorial
-> wall of looks, each scored and explained against *your* colouring — skin
-> undertone, contrast, face shape and hair.
+> A personalised fashion discovery platform that uses colour theory, style profiling, and outfit matching to curate looks that feel distinctly yours.
 
-![theme](https://img.shields.io/badge/theme-near--black%20%2B%20warm%20gold-D4A537)
-![stack](https://img.shields.io/badge/Vite%20%2B%20React%20%2B%20TS-informational)
-![engine](https://img.shields.io/badge/colour--theory-deterministic-success)
-
-This repository contains **Phase 1 — the Main Feed (Page 1)**, built to maximum
-polish. The recommendation engine is a deterministic, pure-function stand-in for
-a multimodal vision model, so the whole thing runs with **no server and no API
-key** — and is structured so real AI can be dropped in later without touching the UI.
+**Live Demo:** https://aurora-nine-lilac.vercel.app/
 
 ---
 
-## ⚡ Quickest look — one file, zero setup
+## ✨ Overview
 
-Open **[`aurora.html`](aurora.html)** directly in any modern browser
-(double-click it). It is a fully self-contained build: the entire app, all 16
-look photos (base64-inlined) and the colour-theory engine in a single file.
+Aurora is a personalised fashion styling web application designed to answer a simple question:
 
-> Needs an internet connection on first load (React + Tailwind are pulled from a
-> CDN). Everything else — images, logic, styling — is embedded.
+> **What should I wear when I want an outfit that actually feels like me?**
+
+Instead of presenting users with a generic catalogue of outfits, Aurora builds a personal style profile and uses that profile to rank outfits according to colour harmony and styling characteristics.
+
+The application combines:
+
+- Personal style onboarding
+- Photo-based colour estimation
+- A style questionnaire
+- Seasonal colour analysis
+- Colour theory
+- Outfit matching and ranking
+- Personalised styling explanations
+- Curated outfit discovery
+- Category and sorting controls
+- Saved outfits
+- Outfit detail views
+- A visual colour-signature dial
+- Responsive editorial fashion UI
+
+Aurora is built as a frontend-first application and currently operates without a backend or external API dependency for its core recommendation flow.
 
 ---
 
-## 🛠 Run the full project (dev)
+# 🎯 The Problem
+
+Most fashion discovery platforms primarily recommend clothing based on trends, popularity, or broad categories.
+
+However, a visually appealing outfit is not necessarily an outfit that works for a particular person.
+
+Aurora approaches the problem from the opposite direction.
+
+Instead of asking:
+
+> "What outfits are popular?"
+
+Aurora asks:
+
+> **"Which outfits are most compatible with this person's colouring and style characteristics?"**
+
+The system uses characteristics such as:
+
+- Undertone
+- Contrast level
+- Colour depth
+- Seasonal colour profile
+- Face shape
+- Hair characteristics
+- Loved colours
+- Avoided colours
+- Outfit palette
+- Outfit warmth
+- Outfit contrast
+- Occasion
+- Style category
+
+These attributes are combined to produce a personalised outfit ranking.
+
+---
+
+# 🧠 How Aurora Works
+
+Aurora follows a multi-stage personalisation flow.
+
+```text
+                    ┌─────────────────────┐
+                    │       Aurora        │
+                    │  Personal Styling   │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     Onboarding      │
+                    └──────────┬──────────┘
+                               │
+                 ┌─────────────┴─────────────┐
+                 │                           │
+                 ▼                           ▼
+        ┌────────────────┐         ┌────────────────┐
+        │ Upload a Photo │         │  Take the Quiz │
+        └───────┬────────┘         └───────┬────────┘
+                │                          │
+                └────────────┬─────────────┘
+                             ▼
+                    ┌─────────────────────┐
+                    │ Colour / Style Data │
+                    └──────────┬──────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │   Season Engine     │
+                    └──────────┬──────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │   Style Profile     │
+                    └──────────┬──────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │ Outfit Match Engine │
+                    └──────────┬──────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │ Ranked Outfit Feed  │
+                    └─────────────────────┘
+```
+
+---
+
+# 👤 Personalised Onboarding
+
+Aurora begins with an onboarding experience designed to build a user's style profile.
+
+Users can choose between two primary paths.
+
+### 📸 Photo Analysis
+
+Users can upload a photo and Aurora analyses visual colour information from the image.
+
+The current lightweight analysis extracts signals including:
+
+- Estimated skin colour
+- Estimated hair colour
+- Undertone
+- Contrast level
+- Colour depth
+
+The analysis is performed client-side using image pixels and colour calculations.
+
+The application deliberately treats face-shape detection as a low-confidence estimate rather than pretending to provide a fully trained facial-landmark model.
+
+This keeps the prototype transparent about what is actually being calculated.
+
+### 📝 Style Quiz
+
+Users can alternatively provide information through the onboarding questionnaire.
+
+This makes the application usable even when a user does not want to upload a photograph.
+
+The quiz allows the application to construct a profile from user-provided style preferences and characteristics.
+
+---
+
+# 🎨 Seasonal Colour Analysis
+
+Aurora uses a seasonal colour system to classify the user's colouring.
+
+The engine considers:
+
+- Warmth
+- Contrast
+- Lightness / depth
+
+The available seasonal profiles are used to calculate a ranked list of possible colour seasons.
+
+The season engine converts the user's characteristics into numerical values and compares them with the target characteristics of each season.
+
+The result is a **match score**, not a statistical probability.
+
+The top-ranked season is then used to construct the user's `StyleProfile`.
+
+---
+
+# 🌈 Colour Theory Engine
+
+Colour intelligence is one of the central concepts of Aurora.
+
+The application analyses the relationship between a user's colour profile and the colour palette of an outfit.
+
+Outfits contain structured colour metadata such as:
+
+```text
+Palette
+Warmth
+Contrast
+Season
+Occasion
+Style
+```
+
+The engine can then compare the outfit against the user's profile.
+
+For example:
+
+```text
+User
+├── Season: Bright Winter
+├── Undertone: Cool
+├── Contrast: High
+└── Target colours
+        │
+        ▼
+Outfit
+├── Palette: Navy / Ice Blue / White
+├── Warmth: Cool
+└── Contrast: High
+        │
+        ▼
+High compatibility
+```
+
+This allows Aurora to rank outfits based on colour compatibility rather than simply displaying them in a fixed order.
+
+---
+
+# 👗 Outfit Recommendation Engine
+
+Every outfit in the catalogue contains structured metadata.
+
+Each outfit can include:
+
+- Title
+- Image
+- Source
+- Category
+- Colour palette
+- Individual clothing items
+- Season compatibility
+- Occasion
+- Style characteristics
+- Warmth
+- Contrast
+
+The recommendation system analyses every outfit against the current user's profile.
+
+The application then produces a match score for each look and sorts the catalogue accordingly.
+
+The main feed therefore becomes:
+
+```text
+Curated Catalogue
+       ↓
+Profile Analysis
+       ↓
+Outfit Analysis
+       ↓
+Compatibility Score
+       ↓
+Ranking
+       ↓
+Personalised Feed
+```
+
+---
+
+# 🗂️ Fashion Catalogue
+
+Aurora's catalogue is designed as a structured fashion library rather than a collection of unrelated demo images.
+
+Looks are organised into four primary categories:
+
+- **Casual**
+- **Formal**
+- **Street**
+- **Evening**
+
+Each outfit is represented as structured data so that the recommendation engine can reason about it.
+
+Example:
+
+```text
+Champagne After Dark
+
+Category:
+Evening
+
+Palette:
+Champagne / Ivory / Brown
+
+Season:
+Autumn / Winter
+
+Occasion:
+Party / Wedding / Formal Event
+
+Style:
+Romantic / Quiet Luxury
+
+Warmth:
+Warm
+
+Contrast:
+Medium
+```
+
+This metadata-driven approach makes it possible to expand the catalogue without changing the recommendation architecture.
+
+---
+
+# 🧩 Project Structure
+
+```text
+Aurora/
+│
+├── public/
+│   └── favicon.svg
+│
+├── scripts/
+│   └── build-standalone.mjs
+│
+├── src/
+│   │
+│   ├── ai/
+│   │   └── faceAnalysis.ts
+│   │
+│   ├── components/
+│   │   ├── feed/
+│   │   │   ├── Avatar.tsx
+│   │   │   ├── ColorDial.tsx
+│   │   │   ├── DetailDrawer.tsx
+│   │   │   ├── GridHeader.tsx
+│   │   │   ├── Hero.tsx
+│   │   │   ├── Nav.tsx
+│   │   │   ├── OutfitCard.tsx
+│   │   │   ├── OutfitGrid.tsx
+│   │   │   └── UploadModal.tsx
+│   │   │
+│   │   └── onboarding/
+│   │       ├── Onboarding.tsx
+│   │       ├── PhotoStep.tsx
+│   │       ├── QuizStep.tsx
+│   │       ├── SeasonStep.tsx
+│   │       └── types.ts
+│   │
+│   ├── data/
+│   │   ├── outfits.ts
+│   │   ├── profile.ts
+│   │   └── seasons.ts
+│   │
+│   ├── lib/
+│   │   ├── color.ts
+│   │   ├── colorTheory.ts
+│   │   ├── hash.ts
+│   │   ├── motion.ts
+│   │   ├── photoAnalysis.ts
+│   │   └── seasonEngine.ts
+│   │
+│   ├── state/
+│   │   └── ProfileContext.tsx
+│   │
+│   ├── test/
+│   │   ├── engine.test.ts
+│   │   ├── seasonEngine.test.ts
+│   │   └── setup.ts
+│   │
+│   ├── App.tsx
+│   ├── index.css
+│   └── main.tsx
+│
+├── aurora.template.html
+├── index.html
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+├── vite.config.ts
+└── README.md
+```
+
+---
+
+# 🛠️ Technology Stack
+
+Aurora is built using modern frontend technologies.
+
+| Technology | Purpose |
+|---|---|
+| React | User interface |
+| TypeScript | Type-safe application development |
+| Vite | Development server and production build |
+| Tailwind CSS | Styling and responsive UI |
+| Motion | UI animations and transitions |
+| Lucide React | Interface icons |
+| MediaPipe Tasks Vision | Vision-related capability support |
+| Vitest | Testing |
+| Testing Library | Component testing |
+| Browser localStorage | Persisting saved looks |
+
+---
+
+# 🚀 Getting Started
+
+## Prerequisites
+
+Make sure you have installed:
+
+- Node.js
+- npm
+- Git
+
+---
+
+## 1. Clone the repository
+
+```bash
+git clone https://github.com/acorn266/Aurora.git
+```
+
+Move into the project directory:
+
+```bash
+cd Aurora
+```
+
+---
+
+## 2. Install dependencies
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
 ```
 
-Other scripts:
+---
+
+## 3. Start the development server
 
 ```bash
-npm run build       # type-check (tsc) + production build → dist/
-npm run preview     # serve the production build
-npm run test        # vitest — includes the colour-theory engine tests
-npm run standalone  # regenerate the self-contained aurora.html
+npm run dev
 ```
 
----
+Vite will provide a local development URL, normally:
 
-## ✨ What's built (Page 1 — Main Feed)
+```text
+http://localhost:5173/
+```
 
-- **Dark editorial layout** — near-black canvas, warm-gold accents, Playfair
-  display headings.
-- **Top navigation** — category tabs (All / Casual / Formal / Street / Evening)
-  with an animated active pill, a prominent **Upload Garments** CTA, and the
-  user avatar.
-- **Hero** — personalised headline (*"Outfits curated for your colour &
-  structure"*), a subline naming the user's season / face shape / hair, and
-  toggleable **source filter chips** (Vogue, Pinterest, Instagram, Runway,
-  Lookbook).
-- **Grid header** — live matched **count**, **saved** count, and a sort control
-  (best match / highest contrast / warmest palette / newest).
-- **Outfit cards** (responsive 4 → 2 → 1 columns) — each shows:
-  - the look photo (3:4),
-  - a **match-% badge**,
-  - **colour-palette swatches**,
-  - a **save / heart** action (persisted to `localStorage`),
-  - and on **hover**, an overlay with the user's avatar and a short, specific
-    note on **why the outfit suits their features**, plus undertone / contrast /
-    season verdict chips.
-- **Detail drawer** (click any card) — a Page-2 preview: the full rationale, the
-  individual pieces, the named palette, and step-by-step *how to wear it*.
-- **Upload modal** — a real OS file picker + drag-and-drop that previews chosen
-  photos and shows **simulated auto-tagging** (type · colour · fit). No dead
-  buttons anywhere.
+If that port is already in use, Vite will automatically select another available port.
 
 ---
 
-## 🧠 The colour-theory engine
+# ☁️ Deployment
 
-[`src/lib/colorTheory.ts`](src/lib/colorTheory.ts) (with the colour maths in
-[`src/lib/color.ts`](src/lib/color.ts)) is the heart of the product. Given a
-user's [`StyleProfile`](src/data/profile.ts) and an outfit's palette it returns:
+Aurora is deployed using Vercel.
 
-- a **match score** (0–100),
-- **undertone / contrast / season** verdicts,
-- a human-readable **rationale** that references the user's own skin, hair and
-  face shape,
-- and deterministic **how-to-wear** styling tips.
+### Live application
 
-It works by converting each swatch to a **warmth** (hue/chroma) and **lightness**
-value, comparing the palette's average warmth, depth and internal contrast to
-targets derived from the user's seasonal type (here, *Warm Autumn*), and nudging
-for loved / avoided colours.
+https://aurora-nine-lilac.vercel.app/
 
-It is **pure and deterministic** — the same outfit + profile always yields the
-same result (no `Math.random`). That's the seam for production: swap the body of
-`analyseOutfit` for a call to a multimodal model (Claude / GPT-4o) plus a
-colour-theory system prompt, and the entire UI keeps working unchanged.
+### Deploying your own copy
 
-Covered by tests in [`src/test/engine.test.ts`](src/test/engine.test.ts)
-(determinism, score range, warm-palette > cool-palette, rationale content).
+1. Fork or clone the repository.
+2. Install dependencies.
+3. Push the repository to GitHub.
+4. Import the repository into Vercel.
+5. Select **Vite** as the framework preset.
+6. Use the default project root.
+7. Deploy.
+
+For the current project, Vercel builds the application from the GitHub repository.
 
 ---
 
-## 🗺 Scope & roadmap
+# 🤖 AI & Intelligence
 
-**In this build (Phase 1):** the Main Feed and the colour-theory engine, driven
-by a fixed mock profile and 16 mock looks.
+Aurora is designed around an intelligent recommendation architecture, but the current prototype does not depend on a remote generative-AI API for its core outfit-ranking process.
 
-**Designed but stubbed for later phases** (the detail drawer and upload modal
-hint at these):
+Instead, the application uses deterministic algorithms for:
 
-1. **Individual Outfit page** — components with wardrobe swaps, styling
-   variations, colour-theory panel, full how-to-wear.
-2. **Outfit Builder sidebar** — chat-style, natural-language → outfit cards.
-3. **Onboarding** — 3-step face + wardrobe analysis that produces the profile.
-4. Extras — style calendar, wardrobe gap analysis, season profile page,
-   occasion planner, re-wear history.
-5. **Real AI** — replace the deterministic engine with live multimodal calls.
+- Colour analysis
+- Seasonal classification
+- Outfit matching
+- Outfit ranking
+- Styling explanations
 
----
+This has several advantages during development:
 
-## 🧱 Tech
+- No API key required
+- No API costs
+- No backend required
+- Fast local execution
+- Reproducible results
+- Easier testing
 
-Vite · React · TypeScript · Tailwind CSS v4 · `motion/react` (Framer Motion) ·
-`lucide-react` · `zustand`-ready · vitest.
-
-The standalone `aurora.html` re-implements the same UI with CDN React + Tailwind,
-CSS animations and inline SVG icons so it can run from a single file.
-
-Look photos are the project's locally-stored CC-licensed images in
-`public/catalog/` (no external hotlinks), reused as the feed imagery.
+The architecture leaves room for future integration with more advanced multimodal AI systems.
 
 ---
 
-*Phase 1 prototype — Main Feed. Design notes live in `docs/superpowers/`.*
+## 👩‍💻 Author
+
+**Aastha** 
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/aastha-karn-61876a298/)
+
+---
+
+<div align="center">
+Built with ❤️ 
+</div>
